@@ -21,6 +21,4 @@ import org.spongepowered.asm.mixin.injection.callback.*;
  private void vh$stock(CallbackInfoReturnable<Boolean> ci){if(vh$locked)ci.setReturnValue(true);}
  @Inject(method={"satisfiedBy","take"},at=@At("HEAD"),cancellable=true)
  private void vh$match(ItemStack a,ItemStack b,CallbackInfoReturnable<Boolean> ci){if(vh$locked)ci.setReturnValue(false);}
- @Redirect(method="getCostA",at=@At(value="INVOKE",target="Ljava/lang/Math;max(II)I"))
- private int vh$demand(int minimum,int demand){return demand;}
 }

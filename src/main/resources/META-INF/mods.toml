@@ -6,7 +6,7 @@ modId="villagerhelper"
 version="${mod_version}"
 displayName="村民助手"
 authors="${mod_authors}"
-description='''独立村民助手：好感与折扣、交易刷新、持久化真实未来交易与快速补货。未解锁交易在左侧原版列表灰显，共用滚动，不能购买。补货快捷键默认未绑定。'''
+description='''全等级真实交易预览与等级锁、从未交易村民刷新、快速补货与交易中升级；原版声望价格和每日自动补货上限'''
 [[dependencies.villagerhelper]]
 modId="forge"
 mandatory=true

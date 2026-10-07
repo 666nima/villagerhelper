@@ -35,16 +35,17 @@ public class HelperTests {
   }
   System.out.println("REAL_TRADE_PASS open="+keepOpen+" level="+v.getVillagerData().getLevel()+" xp="+v.getVillagerXp());v.setTradingPlayer(null);h.succeed();
  }
- @GameTest(template="empty") public static void automaticThirdRestock(GameTestHelper h){
+ @GameTest(template="empty") public static void automaticDailyRestockLimit(GameTestHelper h){
   Villager v=EntityType.VILLAGER.create(h.getLevel());v.setVillagerData(v.getVillagerData().setProfession(VillagerProfession.FARMER));Preview.ensure(v);
   MerchantOffer o=v.getOffers().get(0);MerchantOffer locked=v.getOffers().stream().filter(x->((OfferAccess)x).vh$level()==2).findFirst().orElseThrow();
-  for(int cycle=0;cycle<4;cycle++){
+  for(int cycle=0;cycle<2;cycle++){
    for(int i=0;i<o.getMaxUses();i++)o.increaseUses();
    var state=new net.minecraft.nbt.CompoundTag();v.saveWithoutId(state);state.putLong("LastRestock",h.getLevel().getGameTime()-2401);state.putInt("RestocksToday",cycle);v.readAdditionalSaveData(state);o=v.getOffers().get(0);
    h.assertTrue(v.shouldRestock(),"normal automatic restock denied at cycle "+(cycle+1));v.restock();h.assertTrue(o.getUses()==0,"automatic restock did not reset stock");
    h.assertTrue(v.getOffers().stream().filter(x->((OfferAccess)x).vh$level()==2).allMatch(MerchantOffer::isOutOfStock),"automatic restock unlocked future");
    h.assertTrue(!v.shouldRestock(),"restock cooldown bypassed");
   }
+  var daily=new net.minecraft.nbt.CompoundTag();v.saveWithoutId(daily);daily.putLong("LastRestock",h.getLevel().getGameTime()-2401);daily.putInt("RestocksToday",2);v.readAdditionalSaveData(daily);v.getOffers().get(0).increaseUses();h.assertTrue(!v.shouldRestock(),"third automatic restock accepted");
   h.succeed();
  }
  @GameTest(template="empty") public static void repeatedPacketIndexState(GameTestHelper h){
@@ -105,13 +106,6 @@ public class HelperTests {
   v.setTradingPlayer(p);v.setPos(p.getX()+20,p.getY(),p.getZ());h.assertTrue(!Network.apply(p,new Network.Request(31,0)),"far request accepted");
   v.setPos(p.getX(),p.getY(),p.getZ());h.assertTrue(!Network.apply(p,new Network.Request(31,9)),"unknown action accepted");
   h.assertTrue(o.getUses()==1,"rejected request mutated offers");h.succeed();
- }
-
- @GameTest(template="empty") public static void gossip(GameTestHelper h) {
-  Villager v=EntityType.VILLAGER.create(h.getLevel());v.setHealth(5);
-  var id=java.util.UUID.randomUUID();var player=net.minecraftforge.common.util.FakePlayerFactory.getMinecraft(h.getLevel());id=player.getUUID();
-  v.onReputationEventFrom(net.minecraft.world.entity.ai.village.ReputationEventType.VILLAGER_HURT,player);
-  h.assertTrue(v.getGossips().getReputation(id,t->t==net.minecraft.world.entity.ai.gossip.GossipType.MAJOR_POSITIVE)==25*5,"low health hurt gossip incorrect");h.succeed();
  }
 
  @GameTest(template="empty") public static void lockedPurchasePaths(GameTestHelper h) {
