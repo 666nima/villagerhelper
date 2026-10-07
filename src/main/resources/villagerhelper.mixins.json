@@ -1,0 +1,1 @@
+{"required":true,"minVersion":"0.8","package":"dev.villagerhelper.mixin","compatibilityLevel":"JAVA_17","refmap":"villagerhelper.refmap.json","mixins":["OfferMixin","VillagerMixin","VillagerInvoker","MenuAccess","ResultSlotMixin","MenuMixin","PlayerOffersMixin"],"client":["LockIconMixin"],"injectors":{"defaultRequire":1}}
